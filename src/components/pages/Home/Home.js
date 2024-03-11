@@ -1,61 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Home.css";
+import axios from "../../../axios";
+import User from "../../ui/User.js";
 
 const Home = () => {
+  const [query, setQuery] = useState("");
+  //users Fetched from API
+  const [users, setUsers] = useState([]);
+
+  const handleQueryInput = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    // console.log(e.target.value);
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const { data } = await axios.get("/search/users?q=" + query);
+      return data?.items;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const handleSearchUsers = async (e) => {
+    e.preventDefault();
+    if (query) {
+      const items = await fetchUsers();
+      setUsers(items);
+    } else {
+      console.log("Ypur query is empty ...");
+    }
+  };
+
   return (
     <div className="container">
       <div className="search-form">
         <h2>GitHub Search User</h2>
         <form action="">
-          <input type="text" />
-          <button>Search</button>
+          <input value={query} onChange={handleQueryInput} type="text" />
+          <button onClick={handleSearchUsers}>Search</button>
         </form>
       </div>
       <div className="search-result">
-        <div className="user">
-          <div className="image">
-            <img
-              src="https://images.pexels.com/photos/20440051/pexels-photo-20440051.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load"
-              alt=""
-            />
-          </div>
-
-          <div className="user-info">
-            <h3>Name of the User</h3>
-            <small>ID34fj</small>
-            <a href="">View profile</a>
-          </div>
-        </div>
-        //dfdlfdgmk
-        <div className="user">
-          <div className="image">
-            <img
-              src="https://images.pexels.com/photos/20440051/pexels-photo-20440051.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load"
-              alt=""
-            />
-          </div>
-
-          <div className="user-info">
-            <h3>Name of the User</h3>
-            <small>ID34fj</small>
-            <a href="">View profile</a>
-          </div>
-        </div>
-        <div className="user">
-          <div className="image">
-            <img
-              src="https://images.pexels.com/photos/20440051/pexels-photo-20440051.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load"
-              alt=""
-            />
-          </div>
-
-          <div className="user-info">
-            <h3>Name of the User</h3>
-            <small>ID34fj</small>
-            <a href="">View profile</a>
-          </div>
-        </div>
-        /**dfsdffdf */
+        {users ? (
+          users.map((user) => {
+            return <User user={user} key={user.id} />;
+          })
+        ) : (
+          <h2>There is nothing to display...</h2>
+        )}
       </div>
     </div>
   );
