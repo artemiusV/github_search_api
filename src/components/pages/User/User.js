@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./User.css";
+import Repo from "../../ui/Repo";
 import site from "../../../assets/site.png";
 import github from "../../../assets/github.png";
 import location from "../../../assets/location.png";
@@ -69,61 +70,14 @@ const User = () => {
           </div>
         </div>
       </div>
-      <div className="user-repo">
-        <div className="repo">
-          <h3>
-            <a href="#">Name of the Repo</a>
-          </h3>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam qui
-            rem fugit, dolor quam facere, soluta quibusdam corrupti quaerat
-            itaque beatae dignissimos, error doloribus perspiciatis! Itaque
-            similique vitae nemo vero.
-          </p>
-          <small>Wrriten in JS</small>
-        </div>
-      </div>
-      <div className="user-repo">
-        <div className="repo">
-          <h3>
-            <a href="#">Name of the Repo</a>
-          </h3>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam qui
-            rem fugit, dolor quam facere, soluta quibusdam corrupti quaerat
-            itaque beatae dignissimos, error doloribus perspiciatis! Itaque
-            similique vitae nemo vero.
-          </p>
-          <small>Wrriten in JS</small>
-        </div>
-      </div>
-      <div className="user-repo">
-        <div className="repo">
-          <h3>
-            <a href="#">Name of the Repo</a>
-          </h3>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam qui
-            rem fugit, dolor quam facere, soluta quibusdam corrupti quaerat
-            itaque beatae dignissimos, error doloribus perspiciatis! Itaque
-            similique vitae nemo vero.
-          </p>
-          <small>Wrriten in JS</small>
-        </div>
-      </div>
-      <div className="user-repo">
-        <div className="repo">
-          <h3>
-            <a href="#">Name of the Repo</a>
-          </h3>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam qui
-            rem fugit, dolor quam facere, soluta quibusdam corrupti quaerat
-            itaque beatae dignissimos, error doloribus perspiciatis! Itaque
-            similique vitae nemo vero.
-          </p>
-          <small>Wrriten in JS</small>
-        </div>
+      <div className="user-repos">
+        {repos ? (
+          repos.map((repo) => {
+            return <Repo repo={repo} key={repo.id} />;
+          })
+        ) : (
+          <h2>No repos for this user...</h2>
+        )}
       </div>
     </div>
   );
