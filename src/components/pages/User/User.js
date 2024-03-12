@@ -1,12 +1,37 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./User.css";
 import site from "../../../assets/site.png";
 import github from "../../../assets/github.png";
 import location from "../../../assets/location.png";
 import user from "../../../assets/user.png";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import axios from "../../../axios";
 
 const User = () => {
+  const { login } = useParams();
+
+  // user info
+  const [userInfo, setUserInfo] = useState({});
+  // user repos
+  const [repos, setRepos] = useState([]);
+
+  useEffect(() => {
+    const fetchUserInformation = async () => {
+      try {
+        const response = await Promise.all([
+          axios.get(`/users/${login}`),
+          axios.get(`/users/${login}/repos`),
+        ]);
+        setUserInfo(response[0].data);
+        setRepos(response[1].data);
+        // console.log(response[0].data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchUserInformation();
+  }, []);
+
   return (
     <div className="container">
       <Link to="/" className="back">
@@ -14,33 +39,32 @@ const User = () => {
       </Link>
       <div className="user-information">
         <div className="image">
-          <img src="https://images.pexels.com/photos/20440051/pexels-photo-20440051.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load" />
+          <img src={userInfo?.avatar_url} />
         </div>
         <div className="user-content">
-          <h3>Name of the User</h3>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo soluta
-            reprehenderit rem neque id unde earum, fugit, assumenda accusantium
-            esse in officia omnis placeat. Accusamus cum tempore suscipit nemo
-            ratione.
-          </p>
+          <h3>{userInfo?.name}</h3>
+          <p>{userInfo?.bio}</p>
 
           <div className="more-data">
             <p>
               <img src={user} alt="" />
-              20 Followers. Following 10
+              {userInfo?.followers} Followers. Following {userInfo?.following}
             </p>
-            <p>
-              <img src={location} alt="" />
-              SouthAfrica
-            </p>
-            <p>
-              <img src={site} alt="" />
-              portfolio.com
-            </p>
+            {userInfo?.location && (
+              <p>
+                <img src={location} alt="" />
+                {userInfo?.location}
+              </p>
+            )}
+            {userInfo?.blog && (
+              <p>
+                <img src={site} alt="" />
+                {userInfo?.blog}
+              </p>
+            )}
             <p>
               <img src={github} alt="" />
-              <a href="#">View GitHub Profile</a>
+              <a href={userInfo?.html_url}>View GitHub Profile</a>
             </p>
           </div>
         </div>
