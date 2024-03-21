@@ -1,7 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const User = ({ user }) => {
+interface UserProps {
+  user: {
+    avatar_url: string;
+    login: string;
+    id: number;
+  };
+}
+
+export const User: React.FC<UserProps> = ({ user }) => {
   const { avatar_url, login, id } = user;
   return (
     <div className="user">
@@ -17,5 +25,3 @@ const User = ({ user }) => {
     </div>
   );
 };
-
-export default User;

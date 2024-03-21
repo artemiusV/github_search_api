@@ -1,25 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./Home.css";
-import axios from "../../../axios";
-import User from "../../ui/User.js";
+import { User } from "../../ui/User";
+import { fetchUsers } from "../../../api";
 
-const Home = () => {
-  const [query, setQuery] = useState("");
+interface HomeProps {}
+interface UsersProps {
+  avatar_url: string;
+  login: string;
+  id: number;
+}
+// interface UserInfoP {
+//   id: number;
+//   name: string;
+//   description: string;
+//   language: string;
+// }
+
+export const Home: React.FC<HomeProps> = () => {
+  const [query, setQuery] = useState<string>("");
   //users Fetched from API
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<UsersProps[]>([]);
   //Page
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState<number>(1);
   //Per page
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState<number>(10);
 
-  const handleQueryInput = (e) => {
+  const handleQueryInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
     // console.log(e.target.value);
   };
 
   const handlePrevPage = () => {
-    setPage((page) => {
+    setPage((page: number) => {
       if (page === 1) return page;
       else return page - 1;
     });
@@ -29,44 +42,47 @@ const Home = () => {
     setPage((page) => page + 1);
   };
 
-  const handlePageLimit = (e) => {
+  const handlePageLimit = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setLimit(parseInt(value));
   };
 
-  const fetchUsers = async () => {
-    try {
-      const { data } = await axios.get("/search/users?q=" + query, {
-        params: {
-          page,
-          per_page: limit,
-        },
-      });
-      return data?.items;
-    } catch (error) {
-      return null;
-    }
-  };
+  // const fetchUsers = async (query) => {
+  //   try {
+  //     const { data } = await instanceAxios.get("/search/users?q=" + query, {
+  //       params: {
+  //         page,
+  //         per_page: limit,
+  //       },
+  //     });
+  //     return data?.items;
 
-  const handleSearchUsers = async (e) => {
+  //     // return data && data.items;
+  //   } catch (error) {
+  //     return null;
+  //   }
+  // };
+
+  const handleSearchUsers = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (query) {
-      const items = await fetchUsers();
+      const items = await fetchUsers(query, page, limit);
+      console.log(items);
       setUsers(items);
     } else {
-      console.log("Ypur query is empty ...");
+      console.log("Your query is empty ...");
     }
   };
 
-  useEffect(() => {
-    const displayUserOnChange = async () => {
-      if (query) {
-        const items = await fetchUsers();
-        setUsers(items);
-      }
-    };
-    displayUserOnChange();
-  }, [page, limit]);
+  // useEffect(() => {
+  //   const displayUserOnChange = async () => {
+  //     if (query) {
+  //       const items = await fetchUsers(query);
+  //       setUsers(items);
+  //     }
+  //   };
+  //   displayUserOnChange();
+  // }, [page, limit, query]);
 
   return (
     <div className="container">
@@ -104,5 +120,3 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;

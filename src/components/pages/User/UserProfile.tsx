@@ -1,36 +1,61 @@
 import React, { useState, useEffect } from "react";
 import "./User.css";
-import Repo from "../../ui/Repo";
+import { Repo } from "../../ui/Repo";
 import site from "../../../assets/site.png";
 import github from "../../../assets/github.png";
 import location from "../../../assets/location.png";
 import user from "../../../assets/user.png";
 import { Link, useParams } from "react-router-dom";
-import axios from "../../../axios";
+import { fetchUserData, fetchUserRepos } from "../../../api";
+// import {axios} from '../../../api'
 
-const User = () => {
-  const { login } = useParams();
+interface UserInfo {
+  avatar_url: string;
+  name: string;
+  bio: string;
+  followers: number;
+  following: number;
+  location: string | null;
+  blog: string | null;
+  html_url: string;
+}
+
+interface RepoInfo {
+  id: number;
+  name: string;
+  description: string;
+  language: string;
+}
+
+export const User: React.FC = () => {
+  const { login } = useParams<{ login: string }>();
 
   // user info
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    avatar_url: "",
+    name: "",
+    bio: "",
+    followers: 0,
+    following: 0,
+    location: null,
+    blog: null,
+    html_url: "",
+  });
   // user repos
-  const [repos, setRepos] = useState([]);
+  const [repos, setRepos] = useState<RepoInfo[]>([]);
 
   useEffect(() => {
-    const fetchUserInformation = async () => {
-      try {
-        const response = await Promise.all([
-          axios.get(`/users/${login}`),
-          axios.get(`/users/${login}/repos`),
-        ]);
-        setUserInfo(response[0].data);
-        setRepos(response[1].data);
-        // console.log(response[0].data);
-      } catch (error) {
-        console.error(error);
-      }
+    if (!login) {
+      return;
+    }
+
+    const fetchUserInformation = async (login: string) => {
+      const respon1 = await fetchUserData(login);
+      const respons2 = await fetchUserRepos(login);
+      setUserInfo(respon1.data);
+      setRepos(respons2.data);
     };
-    fetchUserInformation();
+    fetchUserInformation(login);
   }, []);
 
   return (
@@ -82,5 +107,3 @@ const User = () => {
     </div>
   );
 };
-
-export default User;

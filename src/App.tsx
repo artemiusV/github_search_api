@@ -1,9 +1,9 @@
 import "./App.css";
-import Home from "./components/pages/Home/Home";
-import User from "./components/pages/User/User";
+import { Home } from "./components/pages/Home/Home";
+import { User } from "./components/pages/User/UserProfile";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-function App() {
+export function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -13,5 +13,3 @@ function App() {
     </BrowserRouter>
   );
 }
-
-export default App;
